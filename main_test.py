@@ -8,8 +8,8 @@ client = TestClient(app)
 
 def test_login():
     # given
-    id = "asd"
-    password = "csa"
+    id = "asdf"
+    password = "zxcv"
     form = {
         "id": id,
         "password": password
