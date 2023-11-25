@@ -1,7 +1,7 @@
 from fastapi import FastAPI, status
 from fastapi.exceptions import HTTPException
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 app = FastAPI()
 
@@ -17,3 +17,14 @@ async def login(login_schema: LoginSchema):
         raise HTTPException(status.HTTP_403_FORBIDDEN,
                             detail="please right id or password")
     return login_schema.id
+
+class UserCreate(BaseModel):
+    id: str
+    password: str
+    password_confirm: str
+    name: str
+    # @validator('password')
+
+@app.post("/users", status_code=status.HTTP_201_CREATED)
+async def create_user(user: dict):
+    return user
