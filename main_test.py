@@ -49,3 +49,19 @@ def test_create_user():
     assert response.json()['id'] == 'vda'
     assert response.json()['password'] == 'sadv'
     assert response.json()['name'] == 'json'
+
+
+def test_creat_user_not_match_password():
+    # given
+    form = {
+        "id": "vda",
+        "password": "sadv",
+        "password_confirm": "as",
+        "name": "json"
+    }
+    # when
+    response = client.post('/users', json=form)
+    # then
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.json()[
+        'detail'][0]['msg'] == 'Value error, passwords do not match'

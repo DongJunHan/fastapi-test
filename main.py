@@ -1,7 +1,7 @@
 from fastapi import FastAPI, status
 from fastapi.exceptions import HTTPException
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator, ValidationInfo, model_validator
 
 app = FastAPI()
 
@@ -18,13 +18,22 @@ async def login(login_schema: LoginSchema):
                             detail="please right id or password")
     return login_schema.id
 
+
 class UserCreate(BaseModel):
     id: str
     password: str
     password_confirm: str
     name: str
-    # @validator('password')
+
+    @model_validator(mode='after')
+    def check_compare_password(self) -> 'UserCreate':
+        p1 = self.password
+        p2 = self.password_confirm
+        if p1 is not None and p2 is not None and p1 != p2:
+            raise ValueError('passwords do not match')
+        return self
+
 
 @app.post("/users", status_code=status.HTTP_201_CREATED)
-async def create_user(user: dict):
+async def create_user(user: UserCreate):
     return user
